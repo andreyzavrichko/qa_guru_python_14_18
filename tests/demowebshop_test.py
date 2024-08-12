@@ -12,7 +12,6 @@ API_URL = "https://demowebshop.tricentis.com/"
 
 
 def test_add_to_cart_api():
-    """Successful authorization to some demowebshop (API)"""
     with step("Login with API"):
         result = requests.post(
             url=API_URL + "/login",
@@ -38,7 +37,6 @@ def test_add_to_cart_api():
 
 
 def test_add_to_cart_book_api():
-    """Successful authorization to some demowebshop (API)"""
     with step("Login with API"):
         result = requests.post(
             url=API_URL + "/login",
@@ -69,6 +67,8 @@ def test_add_to_cart_book_api():
         browser.element('#topcartlink').click()
         browser.element('td.remove-from-cart input[type=checkbox]').should(
             be.visible).click()
+        browser.element('.update-cart-button').click()
+        browser.element('#topcartlink').click()
         browser.element('td.remove-from-cart input[type=checkbox]').should(
             be.visible).click()
         browser.element('.update-cart-button').click()
