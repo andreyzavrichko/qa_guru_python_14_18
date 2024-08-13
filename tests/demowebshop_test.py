@@ -1,68 +1,42 @@
-import requests
+import allure
 from allure_commons._allure import step
-from allure_commons.types import AttachmentType
 from selene import browser, be
 from selene.support.conditions import have
-import allure
-
-LOGIN = "andrey@zavrichko.dev"
-PASSWORD = "kyvL2$DqcbRTLh5"
-WEB_URL = "https://demowebshop.tricentis.com/"
-API_URL = "https://demowebshop.tricentis.com/"
+from tests.api_call import api_call
+from utils.data import WEB_URL
 
 
+@allure.title("Test add to cart")
 def test_add_to_cart_api():
-    with step("Login with API"):
-        result = requests.post(
-            url=API_URL + "/login",
-            data={"Email": LOGIN, "Password": PASSWORD, "RememberMe": False},
-            allow_redirects=False
-        )
-        allure.attach(body=result.text, name="Response", attachment_type=AttachmentType.TEXT, extension="txt")
-        allure.attach(body=str(result.cookies), name="Cookies", attachment_type=AttachmentType.TEXT, extension="txt")
-    with step("Get cookie from API"):
-        cookie = result.cookies.get("NOPCOMMERCE.AUTH")
     with step("Add to cart"):
-        add_to_cart = requests.post(
-            url=API_URL + "addproducttocart/catalog/31/1/1",
-            cookies={"NOPCOMMERCE.AUTH": cookie})
-        assert add_to_cart.json()["success"]
-    with step("Set cookie from API"):
-        browser.open(WEB_URL)
-        browser.driver.add_cookie({"name": "NOPCOMMERCE.AUTH", "value": cookie})
+        api_call.add_item_to_cart("/31/1/1")
+
+    with step("Open browser"):
         browser.open(WEB_URL)
 
     with step("Verify successful add to cart"):
         browser.element(".cart-qty").should(have.text("(1)"))
+        browser.element('#topcartlink').click()
+        browser.element(".product-unit-price").should(have.text("1590.00"))
+        browser.element(".product-name").should(have.text("14.1-inch Laptop"))
+
+    with step("Delete cart"):
+        browser.element('td.remove-from-cart input[type=checkbox]').should(
+            be.visible).click()
 
 
+@allure.title("Test add book to cart")
 def test_add_to_cart_book_api():
-    with step("Login with API"):
-        result = requests.post(
-            url=API_URL + "/login",
-            data={"Email": LOGIN, "Password": PASSWORD, "RememberMe": False},
-            allow_redirects=False
-        )
-        allure.attach(body=result.text, name="Response", attachment_type=AttachmentType.TEXT, extension="txt")
-        allure.attach(body=str(result.cookies), name="Cookies", attachment_type=AttachmentType.TEXT, extension="txt")
-    with step("Get cookie from API"):
-        cookie = result.cookies.get("NOPCOMMERCE.AUTH")
     with step("Add to cart"):
-        add_to_cart = requests.post(
-            url=API_URL + "addproducttocart/catalog/45/1/1",
-            cookies={"NOPCOMMERCE.AUTH": cookie})
-        assert add_to_cart.json()["success"]
-    with step("Add to cart"):
-        add_to_cart = requests.post(
-            url=API_URL + "addproducttocart/catalog/22/1/1",
-            cookies={"NOPCOMMERCE.AUTH": cookie})
-        assert add_to_cart.json()["success"]
-    with step("Set cookie from API"):
+        api_call.add_item_to_cart("/45/1/1")
+        api_call.add_item_to_cart("/22/1/1")
+
+    with step("Open browser"):
         browser.open(WEB_URL)
-        browser.driver.add_cookie({"name": "NOPCOMMERCE.AUTH", "value": cookie})
-        browser.open(WEB_URL)
+
     with step("Verify successful add to cart"):
         browser.element(".cart-qty").should(have.text("(2)"))
+
     with step("Delete cart"):
         browser.element('#topcartlink').click()
         browser.element('td.remove-from-cart input[type=checkbox]').should(
