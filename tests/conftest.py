@@ -4,7 +4,7 @@ import allure
 from utils.tools import get_auth_cookie, add_auth_cookie
 
 
-@pytest.fixture(scope='session', autouse=True)
+@pytest.fixture(scope='function', autouse=True)
 def set_browser():
     with allure.step('Browser config'):
         browser.config.window_width = 1920
