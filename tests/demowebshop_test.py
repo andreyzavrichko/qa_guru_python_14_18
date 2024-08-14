@@ -20,10 +20,6 @@ def test_add_to_cart_api():
         browser.element(".product-unit-price").should(have.text("1590.00"))
         browser.element(".product-name").should(have.text("14.1-inch Laptop"))
 
-    with step("Delete cart"):
-        browser.element('td.remove-from-cart input[type=checkbox]').should(
-            be.visible).click()
-
 
 @allure.title("Test add book to cart")
 def test_add_to_cart_book_api():
@@ -37,12 +33,4 @@ def test_add_to_cart_book_api():
     with step("Verify successful add to cart"):
         browser.element(".cart-qty").should(have.text("(2)"))
 
-    with step("Delete cart"):
-        browser.element('#topcartlink').click()
-        browser.element('td.remove-from-cart input[type=checkbox]').should(
-            be.visible).click()
-        browser.element('.update-cart-button').click()
-        browser.element('#topcartlink').click()
-        browser.element('td.remove-from-cart input[type=checkbox]').should(
-            be.visible).click()
-        browser.element('.update-cart-button').click()
+
